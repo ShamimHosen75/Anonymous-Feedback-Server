@@ -23,8 +23,6 @@ client.connect(err => {
 
 
 
-
-
 app.get('/', (req, res) => {
   res.send('Running Anonymous Server!');
 });
