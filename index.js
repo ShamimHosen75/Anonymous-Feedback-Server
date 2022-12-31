@@ -2,51 +2,56 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
-const port = process.env.PORT || 5000;
+
 const app = express();
 const jwt = require('jsonwebtoken');
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
+
 // MongoDB url
-const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_PASS}@cluster0.dpww6y9.mongodb.net/?retryWrites=true&w=majority`;
+const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.em3ukih.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   console.log('Anonymous Feedback Connected!')
-//   // perform actions on the collection object
-//   client.close();
-// });
+
+
 
 async function run(){
   try{
     await client.connect();
-    const feedbackCollection = client.db('anonymous-feedback').collection('reviews');
+    const feedbackCollection = client.db("feedback").collection("getdata");
+    const userCollection = client.db("feedback").collection("user");
 
-    app.get('/reviews', async(req, res) =>{
+    app.get('/review', async (req, res) =>{
+      // console.log(feedbackCollection);
       const query = {};
       const cursor = feedbackCollection.find(query);
-      const reviews = await cursor.toArray();
-      res.send(reviews);
-      
+      // console.log(cursor);
+      const result  = await cursor.toArray();
+      console.log(result)
+      res.send(result);
     })
 
-    // get all reveiws
-    app.get("/reveiws", async (req, res) => {
-      const result = await reveiwCollection.find().toArray();
-      res.send(result);
+    // user update 
+   app.put("/user/:email", async (req, res) => {
+    const email = req.params.email;
+    const user = req.body;
+    const filter = { email: email };
+    const options = { upsert: true }
+    const updateDoc = {
+        $set: user,
+    }
+    const result = await userCollection.updateOne(filter, updateDoc, options)
+    const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { 
+       expiresIn: '1h' });
+    res.send({ result, token });
   })
 
-  // add reveiws
-  app.post("/reveiws", async (req, res) => {
-      const newReveiws = req.body;
-      const result = await reveiwCollection.insertOne(newReveiws);
-      res.send({ success: true, result });
-  })
+  }finally{
 
-  }finally{}
+  }
 }
 run().catch(console.dir);
 
@@ -66,7 +71,6 @@ function verifyJWT(req, res, next) {
       next();
   });
 }
-
 
 
 app.get('/', (req, res) => {
