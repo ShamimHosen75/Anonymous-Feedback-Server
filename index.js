@@ -24,7 +24,8 @@ async function run(){
     const feedbackCollection = client.db("feedback").collection("getdata");
     const userCollection = client.db("feedback").collection("user");
 
-    app.get('/review', async (req, res) =>{
+    // user review
+    app.get('/reviews', async (req, res) =>{
       // console.log(feedbackCollection);
       const query = {};
       const cursor = feedbackCollection.find(query);
@@ -33,6 +34,15 @@ async function run(){
       console.log(result)
       res.send(result);
     })
+
+
+    // add reviews
+    app.post("/reviews", async (req, res) => {
+      const newReviews = req.body;
+      const result = await feedbackCollection.insertOne(newReviews);
+      res.send({ success: true, result });
+    })
+
 
     // user update 
    app.put("/user/:email", async (req, res) => {
