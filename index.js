@@ -21,7 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
   try{
     await client.connect();
-    const feedbackCollection = client.db("feedback").collection("reveiws");
+    const feedbackCollection = client.db("feedback").collection("reviews");
     const userCollection = client.db("feedback").collection("user");
 
     // user review
