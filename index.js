@@ -16,7 +16,21 @@ app.use(express.json());
 const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.em3ukih.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+// Verify JWT Token
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+      return res.status(401).send({ "Unauthorized": "access" })
+  }
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+      if (err) {
+          return res.status(403).send({ "Unauthorized": "Forbidden access" })
+      }
+      req.decoded = decoded;
+      next();
+  });
+}
 
 async function run(){
   try{
@@ -45,7 +59,7 @@ async function run(){
 
 
     // get all user
-    app.get("/allUser", verifyJWT, async (req, res) => {
+    app.get("/user", verifyJWT, async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     })
@@ -111,23 +125,6 @@ async function run(){
   }
 }
 run().catch(console.dir);
-
-
-// Verify JWT Token
-function verifyJWT(req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-      return res.status(401).send({ "Unauthorized": "access" })
-  }
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-      if (err) {
-          return res.status(403).send({ "Unauthorized": "Forbidden access" })
-      }
-      req.decoded = decoded;
-      next();
-  });
-}
 
 
 app.get('/', (req, res) => {
