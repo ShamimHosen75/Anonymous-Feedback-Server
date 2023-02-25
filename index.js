@@ -41,18 +41,17 @@ async function run() {
   const feedbackCollection = client.db("feedback").collection("reviews");
   const userCollection = client.db("feedback").collection("user");
 
-
   // route to handle pin code submission
-  app.post("/api/check-pin", (req, res) => {
-   const adminPin = "1234"; // set the admin pin code here
-   const userPin = req.body.pin; // get the user pin code from the request body
+  // app.post("/password", (req, res) => {
+  //  const adminPin = "1234"; // set the admin pin code here
+  //  const userPin = req.body.pin; // get the user pin code from the request body
 
-   if (adminPin === userPin) {
-    res.json({ success: true });
-   } else {
-    res.status(401).json({ error: "Invalid pin code" });
-   }
-  });
+  //  if (adminPin === userPin) {
+  //   res.json({ success: true });
+  //  } else {
+  //   res.status(401).json({ error: "Invalid pin code" });
+  //  }
+  // });
 
   // // route to retrieve data from MongoDB database
   // app.get('/api/data', (req, res) => {
@@ -62,7 +61,6 @@ async function run() {
 
   //  // fetch data from backend API
   //  fetch('/api/data')
-
 
 
   // user review
