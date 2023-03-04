@@ -62,6 +62,14 @@ async function run() {
   //  // fetch data from backend API
   //  fetch('/api/data')
 
+  app.get("/", (req, res) => {
+    res.send("Running Anonymous Server!");
+   });
+   
+   app.listen(port, () => {
+    console.log("Listing to port", port);
+   });
+
 
   // user review
   app.get("/reviews", async (req, res) => {
@@ -148,6 +156,7 @@ async function run() {
    res.send({ success: true, result });
   });
 
+
   // user delete
   app.delete("/user/:id", async (req, res) => {
    const id = req.params.id;
@@ -160,10 +169,4 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get("/", (req, res) => {
- res.send("Running Anonymous Server!");
-});
 
-app.listen(port, () => {
- console.log("Listing to port", port);
-});
