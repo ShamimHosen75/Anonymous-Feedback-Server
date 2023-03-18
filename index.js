@@ -144,6 +144,7 @@ async function run() {
    const deleteUser = await userCollection.deleteOne(query);
    res.send(deleteUser);
   });
+  
  } finally {
  }
 }
